@@ -48,6 +48,16 @@ install_and_verify = function(package_name, configure.args=c(), repos=c('http://
     print(paste('Successfully installed and test loaded ', package_name, sep=''))
 }
 
+install_github_and_verify = function(package_name){
+    print(paste('Calling install for package ', package_name, sep=''))
+    devtools::install_github(package_name)
+    if (!require(package_name, character.only = TRUE)){
+        print('Error installing package, check log')
+        quit(status=1)
+    }
+    print(paste('Successfully installed and test loaded ', package_name, sep=''))
+}
+
 # Install Probability / Optimization / Analysis Packages
 install_and_verify('lhs')
 install_and_verify('e1071')
@@ -61,4 +71,7 @@ install_and_verify('DoE.base')
 install_and_verify('sensitivity')
 install_and_verify('rstan')
 install_and_verify('fields')
+install_and_verify('devtools')
+library('devtools')
+install_github_and_verify('timelyportfolio/parcoords')
 

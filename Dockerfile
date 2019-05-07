@@ -1,8 +1,11 @@
 # AUTHOR:           Brian Ball
 # DESCRIPTION:      Rstudio Server Container. Modified from rocker/rstudio to use nrel/openstudio-r as base, ubuntu base, work on OS-Server.
-# TO_BUILD_AND_RUN: docker-compose up
+# TO_BUILD_AND_RUN: docker run -p 127.0.0.1:8787:8787 -e DISABLE_AUTH=true
 FROM nrel/openstudio-r:3.5.2-1
 LABEL MAINTAINER Brian Ball <brian.ball@nrel.gov>
+
+#link gtar to tar for devtools::install_github to work
+RUN ln -s /bin/tar /bin/gtar
 
 # Add in the additional R packages
 ADD /install_packages.R install_packages.R
