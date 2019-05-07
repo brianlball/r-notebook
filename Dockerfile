@@ -1,7 +1,14 @@
+# AUTHOR:           Brian Ball
+# DESCRIPTION:      Rstudio Server Container. Modified from rocker/rstudio to use nrel/openstudio-r as base, ubuntu base, work on OS-Server.
+# TO_BUILD_AND_RUN: docker-compose up
 FROM nrel/openstudio-r:3.5.2-1
+LABEL MAINTAINER Brian Ball <brian.ball@nrel.gov>
 
-ARG RSTUDIO_VERSION
-ENV RSTUDIO_VERSION=${RSTUDIO_VERSION:-1.2.1335}
+# Add in the additional R packages
+ADD /install_packages.R install_packages.R
+RUN Rscript install_packages.R
+
+ENV RSTUDIO_VERSION=1.2.1335
 ARG S6_VERSION
 ARG PANDOC_TEMPLATES_VERSION
 ENV S6_VERSION=${S6_VERSION:-v1.21.7.0}
@@ -35,10 +42,7 @@ RUN apt-get update \
     libllvm3.8 \
     libobjc4 \
     libgc1c2 \
-#  && wget -O libssl1.0.0.deb http://ftp.debian.org/debian/pool/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u8_amd64.deb \
-#  && dpkg -i libssl1.0.0.deb \
-#  && rm libssl1.0.0.deb \
-  && if [ -z "$RSTUDIO_VERSION" ]; then RSTUDIO_URL="https://www.rstudio.org/download/latest/stable/server/trusty/rstudio-server-latest-amd64.deb"; else RSTUDIO_URL="http://download2.rstudio.org/server/trusty/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb"; fi \
+  && RSTUDIO_URL="http://download2.rstudio.org/server/trusty/amd64/rstudio-server-${RSTUDIO_VERSION}-amd64.deb" \
   && wget -q $RSTUDIO_URL \
   && dpkg -i rstudio-server-*-amd64.deb \
   && rm rstudio-server-*-amd64.deb \
